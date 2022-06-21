@@ -1,7 +1,6 @@
 package com.ufc.web.heroes.controller;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -32,43 +31,45 @@ public class HeroeController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<Object> getAll(){
-		return ResponseEntity.status(HttpStatus.OK).body(heroeService.getAll());
+	public Iterable<Heroe> getAll(){
+		return heroeService.getAll();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Object> getHeroeById(@PathVariable(value = "id") UUID id){
+	public Object getHeroeById(@PathVariable(value = "id") Integer id){
 		Optional<Heroe> heroeOptional = heroeService.getHeroeById(id);
 		
 		if (!heroeOptional.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No hero found with id: " + id);
+			return "No hero found with id: " + id;
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(heroeOptional.get());
+		return heroeOptional.get();
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID id){
+	public Object delete(@PathVariable(value = "id") Integer id){
 		Optional<Heroe> heroeOptional = heroeService.getHeroeById(id);
 		
 		if (!heroeOptional.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No hero found with id: " + id);
+			return "No hero found with id: " + id;
 		}
 		
 		heroeService.delete(heroeOptional.get());
-		return ResponseEntity.status(HttpStatus.OK).body("Hero successfully deleted!");
+		return "Hero successfully deleted!";
 	}
 
-	@PutMapping("/id")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") UUID id, @RequestBody @Valid HeroeDTO heroeDTO){
+	@PutMapping("/{id}")
+	public Object update(@PathVariable(value = "id") Integer id, @RequestBody @Valid HeroeDTO heroeDTO){
 		Optional<Heroe> heroeOptional = heroeService.getHeroeById(id);
 		
 		if (!heroeOptional.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No hero found with id: " + id);
+			return "No hero found with id: " + id;
 		}
 		
 		var heroe = heroeOptional.get();
-		//heroe.setName(heroeDTO.getName());
+		heroe.setName(heroeDTO.getName());
+		
+		heroeService.save(heroe);
 				
-		return ResponseEntity.status(HttpStatus.OK).body(heroeService.save(heroe));
+		return heroeService.getHeroeById(id);
 	}
 }
