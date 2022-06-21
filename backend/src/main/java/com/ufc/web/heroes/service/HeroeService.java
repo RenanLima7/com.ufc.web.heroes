@@ -2,7 +2,6 @@ package com.ufc.web.heroes.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -26,7 +25,7 @@ public class HeroeService {
 		return heroeRepository.findAll();
 	}
 	
-	public Optional<Heroe> getHeroeById(UUID id){
+	public Optional<Heroe> getHeroeById(Integer id){
 		return heroeRepository.findById(id);
 	}
 	
